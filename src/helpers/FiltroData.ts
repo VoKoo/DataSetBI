@@ -7,6 +7,7 @@ export const CHART_COLORS = {
     yellow: 'rgb(255, 205, 86)',
     green: 'rgb(75, 192, 192)',
     blue: 'rgb(54, 162, 235)',
+    bluebg: 'rgb(54, 162, 235, 0.5)',
     purple: 'rgb(153, 102, 255)',
     grey: 'rgb(201, 203, 207)'
 };
@@ -43,10 +44,12 @@ export const filtroPorAño = (jsonData: ITypeDataProveedores) => {
     return result
 }
 
-export const traficoMasAlto = (jsonData: ITypeDataProveedores) => {
+export const traficoMasAlto = (jsonData: ITypeDataProveedores, periodo: string) => {
+
 
     const highestTrafficByProviderAndQuarter: Record<string, Record<string, number>> = {};
-    const data2021 = jsonData.filter(item => item.a_o === "2021");
+    const data2021 = jsonData.filter(item => item.a_o === periodo);
+
 
     // Iterar a través de los datos y calcular el tráfico más alto por proveedor y trimestre
     data2021.forEach(item => {
@@ -74,7 +77,7 @@ export const traficoMasAlto = (jsonData: ITypeDataProveedores) => {
 
     const proveedorPorTrimestre = result.filter(el => el.trimestre === "1")
 
-    return proveedorPorTrimestre
+    return result
 }
 
 export const mejorAñoCadaProveedor = (jsonData: ITypeDataProveedores) => {
@@ -110,7 +113,7 @@ export const mejorAñoCadaProveedor = (jsonData: ITypeDataProveedores) => {
         for (const year in years) {
             const maxTraffic = years[year];
             const matchingItem = jsonData.find(item => item.proveedor === proveedor && item.a_o === year && parseInt(item.tr_fico, 10) === maxTraffic);
-            console.log(matchingItem)
+            // console.log(matchingItem)
             if (matchingItem) {
                 maxTrafficInfoByYear[year] = matchingItem;
             }
@@ -122,3 +125,74 @@ export const mejorAñoCadaProveedor = (jsonData: ITypeDataProveedores) => {
 
     return maxTrafficInfoArray;
 }
+
+export const traficoMasAltoPrueba = (jsonData: ITypeDataProveedores, periodo: string, trimestre: string) => {
+    const highestTrafficByProviderAndQuarter: Record<string, Record<string, number>> = {};
+    const processedProviders: Set<string> = new Set();
+    const data2021 = jsonData.filter(item => item.a_o === periodo);
+    const trimestre2: ITypeDataProveedores = data2021.filter(item => item.trimestre === trimestre)
+
+    console.log(data2021)
+
+
+    if (trimestre !== "") {
+        trimestre2.forEach(item => {
+            const proveedor = item.proveedor;
+            const trimestre = item.trimestre;
+            const tr_fico = parseFloat(item.tr_fico); // Convertir el tráfico a número
+
+            if (!processedProviders.has(proveedor)) {
+                if (!highestTrafficByProviderAndQuarter[proveedor]) {
+                    highestTrafficByProviderAndQuarter[proveedor] = {};
+                }
+
+                if (!highestTrafficByProviderAndQuarter[proveedor][trimestre] || tr_fico > highestTrafficByProviderAndQuarter[proveedor][trimestre]) {
+                    highestTrafficByProviderAndQuarter[proveedor][trimestre] = tr_fico;
+                }
+
+                processedProviders.add(proveedor);
+            }
+        });
+
+        // Crear un array de objetos con el tráfico más alto por proveedor y trimestre
+        const result: { proveedor: string; trimestre: string; tr_fico: number }[] = [];
+        for (const proveedor in highestTrafficByProviderAndQuarter) {
+            for (const trimestre in highestTrafficByProviderAndQuarter[proveedor]) {
+                const tr_fico = highestTrafficByProviderAndQuarter[proveedor][trimestre];
+                result.push({ proveedor, trimestre, tr_fico });
+            }
+        }
+
+        return result;
+    } else {
+        // Iterar a través de los datos y calcular el tráfico más alto por proveedor y trimestre
+        data2021.forEach(item => {
+            const proveedor = item.proveedor;
+            const trimestre = item.trimestre;
+            const tr_fico = parseFloat(item.tr_fico); // Convertir el tráfico a número
+
+            if (!processedProviders.has(proveedor)) {
+                if (!highestTrafficByProviderAndQuarter[proveedor]) {
+                    highestTrafficByProviderAndQuarter[proveedor] = {};
+                }
+
+                if (!highestTrafficByProviderAndQuarter[proveedor][trimestre] || tr_fico > highestTrafficByProviderAndQuarter[proveedor][trimestre]) {
+                    highestTrafficByProviderAndQuarter[proveedor][trimestre] = tr_fico;
+                }
+
+                processedProviders.add(proveedor);
+            }
+        });
+
+        // Crear un array de objetos con el tráfico más alto por proveedor y trimestre
+        const result: { proveedor: string; trimestre: string; tr_fico: number }[] = [];
+        for (const proveedor in highestTrafficByProviderAndQuarter) {
+            for (const trimestre in highestTrafficByProviderAndQuarter[proveedor]) {
+                const tr_fico = highestTrafficByProviderAndQuarter[proveedor][trimestre];
+                result.push({ proveedor, trimestre, tr_fico });
+            }
+        }
+
+        return result;
+    }
+};

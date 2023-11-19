@@ -5,14 +5,14 @@ import { ILineChart } from "@/models/IDataProveedores"
 import { CHART_COLORS } from "@/helpers/FiltroData"
 Chartjs.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
-const LineChart: React.FC<ILineChart> = ({ dataTraficoAlto, dataProveedorAno }) => {
-    console.log(dataTraficoAlto)
+const LineChart: React.FC<ILineChart> = ({ dataTraficoAlto }) => {
+
     const midata = {
-        labels: dataTraficoAlto.map((el) => el.proveedor),
+        labels: dataTraficoAlto?.map((el) => el.proveedor),
         datasets: [
             {
-                label: 'Trafico por proveedor en el primero trimestre 2021',
-                data: dataTraficoAlto.map((el) => el.tr_fico),
+                label: `Trafico`,
+                data: dataTraficoAlto?.map((el) => el.tr_fico),
                 tension: 0.5,
                 fill: true,
                 borderColor: 'rgb(255, 99, 132)',

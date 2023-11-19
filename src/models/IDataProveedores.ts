@@ -17,6 +17,9 @@ export interface ILineChart {
         trimestre: string
     }[]
 
+}
+
+export interface ILineChartProveedorAno {
     dataProveedorAno: {
         a_o: string
         proveedor: string
@@ -25,8 +28,8 @@ export interface ILineChart {
         tr_fico: string
         trimestre: string
     }[]
-
 }
-export interface INuevainterfazPRueba{
-    
+
+export interface INuevainterfazPRueba {
+
 }
