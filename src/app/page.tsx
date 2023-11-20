@@ -1,10 +1,8 @@
 'use client'
-import BarChart from "@/components/BarChart";
 import LineChart from "../components/LineChart";
-import PiesChart from "@/components/PiesChart";
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, use } from 'react'
 import { ITypeDataProveedores } from "@/models/IDataProveedores";
-import { filtroPorAño, traficoMasAlto, mejorAñoCadaProveedor, traficoMasAltoPrueba } from "@/helpers/FiltroData";
+import { traficoMasAltoPrueba } from "@/helpers/FiltroData";
 
 
 const Home = () => {
@@ -13,7 +11,12 @@ const Home = () => {
   const [filtroTab, setFiltroTab] = useState(1);
   const [periodo, setPeriodo] = useState("2020");
   const [trimestre, setTrimestre] = useState("");
-  console.log(filtroTab, "filtroTab", periodo, "periodo", trimestre, "trimestre")
+  const [isActive, setIsActive] = useState({
+    trimestreUno: false,
+    trimestreDos: false,
+    trimestres: false,
+    trimestreCuatro: false
+  })
 
   useEffect(() => {
     fetch("https://www.datos.gov.co/resource/4z5v-cr6b.json")
@@ -31,17 +34,11 @@ const Home = () => {
   };
 
   //Nombres de proveedores
-  const nombrePorveedores = datos.map(el => el.proveedor)
-  const quitarNombresRepetidos = new Set(nombrePorveedores)
-  const newArrayNombresProveedores = [...quitarNombresRepetidos];
+  // const nombrePorveedores = datos.map(el => el.proveedor)
+  // const quitarNombresRepetidos = new Set(nombrePorveedores)
+  // const newArrayNombresProveedores = [...quitarNombresRepetidos];
 
-
-
-  const filtroTraficoMasAlto = traficoMasAlto(datos, periodo)
   const pruebaProveedoresMasAlto = traficoMasAltoPrueba(datos, periodo, trimestre)
-  console.log(pruebaProveedoresMasAlto, "pruebaproveedormásalto")
-  const mejorAnoProveedor = mejorAñoCadaProveedor(datos)
-
   const periodo2020 = () => {
     handleTabClick(1)
     setPeriodo("2020")
@@ -67,52 +64,60 @@ const Home = () => {
     setPeriodo("2023")
     setTrimestre("")
   }
-  let max = ""
-  let maxTrafico = pruebaProveedoresMasAlto.map((e, i) => (
-    e.tr_fico
-  ))
+
+  const maxTrafico = pruebaProveedoresMasAlto.map(e => e.tr_fico)
   let maxTraficoConvert = maxTrafico.reduce((max, valor) => (valor > max ? valor : max), -Infinity)
-  console.log(maxTraficoConvert, "este es le valor")
 
   return (
     <div className="">
-      <div className=''>
-        <div className='target-explication'>
-          <div>
-            <h3 className='tittle-target'>{trimestre !== '' ? "Año y trimestre" : "Año por provedor"}</h3>
-          </div>
-          <div className="content-target">
-            <p>En el año {periodo} la empresa {pruebaProveedoresMasAlto.map((e, i) => (
-              e.tr_fico === maxTraficoConvert ? e.proveedor : ""
-            ))} tiene un tráfico total de: {maxTraficoConvert} siendo el tráfico más alto del {trimestre ? "trimestre" : "año"}
-            </p>
-          </div>
 
+      <div className=''>
+        <div className='target-explication flex items-center contenedor bg-slate-700'>
+          <div>
+            <h3 className='tittle-target text-lg font-bold'>{trimestre !== '' ? "Año y trimestre" : "Año por provedor"}</h3>
+          </div>
+          <div className="content-target text-base font-normal">
+            {pruebaProveedoresMasAlto.length !== 0 ?
+              <p>En el año {periodo} la empresa {pruebaProveedoresMasAlto.map((e, i) => (
+                e.tr_fico === maxTraficoConvert ? e.proveedor : ""
+              ))} tiene un tráfico total de: {maxTraficoConvert} siendo el tráfico más alto del {trimestre ? `trimestre ${trimestre}` : "año"}
+              </p>
+              :
+              <div>No hay información</div>
+            }
+          </div>
         </div>
       </div>
       <div className="container-tabla">
-        <div className="flex justify-center gap-10">
-
-          <button onClick={periodo2020} className={filtroTab === 1 ? 'active' : ''}>
+        <div className="flex justify-center gap-10 font-bold mt-2 text-lg">
+          <button onClick={periodo2020} className={filtroTab === 1 ? 'bg-slate-700 p-1 rounded-md' : ''}>
             2020
           </button>
-          <button onClick={periodo2021} className={filtroTab === 2 ? 'active' : ''}>
+          <button onClick={periodo2021} className={filtroTab === 2 ? 'bg-slate-700 p-1 rounded-md' : ''}>
             2021
           </button>
-          <button onClick={periodo2022} className={filtroTab === 3 ? 'active' : ''}>
+          <button onClick={periodo2022} className={filtroTab === 3 ? 'bg-slate-700 p-1 rounded-md' : ''}>
             2022
           </button>
-          <button onClick={periodo2023} className={filtroTab === 4 ? 'active' : ''}>
+          <button onClick={periodo2023} className={filtroTab === 4 ? 'bg-slate-700 p-1 rounded-md' : ''}>
             2023
           </button>
         </div>
-        <div className="flex justify-center gap-10">
-          <button onClick={() => setTrimestre("1")}>Trimestre 1</button>
-          <button onClick={() => setTrimestre("2")}>Trimestre 2</button>
-          <button onClick={() => setTrimestre("3")}>Trimestre 3</button>
-          <button onClick={() => setTrimestre("4")}>Trimestre 4</button>
+        <div className="flex justify-center gap-10 font-bold text-lg mt-4">
+          <button className={trimestre === "1" ? "bg-slate-700 p-1 rounded-md" : ""} onClick={() => setTrimestre("1")}>Trimestre 1</button>
+          <button className={trimestre === "2" ? "bg-slate-700 p-1 rounded-md" : ""} onClick={() => setTrimestre("2")}>Trimestre 2</button>
+          <button className={trimestre === "3" ? "bg-slate-700 p-1 rounded-md" : ""} onClick={() => setTrimestre("3")}>Trimestre 3</button>
+          <button className={trimestre === "4" ? "bg-slate-700 p-1 rounded-md" : ""} onClick={() => setTrimestre("4")}>Trimestre 4</button>
         </div>
-        <LineChart dataTraficoAlto={pruebaProveedoresMasAlto} />
+        <div className="mt-4">
+          {pruebaProveedoresMasAlto.length === 0 ?
+            ""
+            :
+            <div className="contenedor">
+              <LineChart dataTraficoAlto={pruebaProveedoresMasAlto} />
+            </div>
+          }
+        </div>
       </div>
     </div>
   );

@@ -113,7 +113,6 @@ export const mejorAñoCadaProveedor = (jsonData: ITypeDataProveedores) => {
         for (const year in years) {
             const maxTraffic = years[year];
             const matchingItem = jsonData.find(item => item.proveedor === proveedor && item.a_o === year && parseInt(item.tr_fico, 10) === maxTraffic);
-            // console.log(matchingItem)
             if (matchingItem) {
                 maxTrafficInfoByYear[year] = matchingItem;
             }
@@ -131,9 +130,6 @@ export const traficoMasAltoPrueba = (jsonData: ITypeDataProveedores, periodo: st
     const processedProviders: Set<string> = new Set();
     const data2021 = jsonData.filter(item => item.a_o === periodo);
     const trimestre2: ITypeDataProveedores = data2021.filter(item => item.trimestre === trimestre)
-
-    console.log(data2021)
-
 
     if (trimestre !== "") {
         trimestre2.forEach(item => {

@@ -1,22 +1,23 @@
 'use client'
+import { ILineChart } from '@/models/IDataProveedores'
 import { Chart as ChartJs, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
 ChartJs.register(ArcElement, Tooltip, Legend)
 
 
-const PiesChart = () => {
+const PiesChart: React.FC<ILineChart> = ({ dataTraficoAlto }) => {
 
     const options = {
-        responsive: true,
-        maintainAspectRatio: false
+        // responsive: true,
+        // maintainAspectRatio: false
     }
 
     const data = {
-        labels: ['Carne', 'Jamón', 'Dulces', 'Turrón', 'Vino'],
+        labels: dataTraficoAlto.map((el) => el.proveedor),
         datasets: [
             {
                 label: 'Popularidad en Navidad',
-                data: [35, 20, 20, 15, 10],
+                data: dataTraficoAlto.map((el) => el.tr_fico),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(255, 206, 86, 0.2)',
