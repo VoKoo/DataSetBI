@@ -12,3 +12,22 @@ body {
     background-color: #000;
     color: #fff;
 }
+
+.container-tabla {
+    width: 90%;
+}
+
+.target-explication {
+    background: gray;
+    border-radius: 0.6rem;
+    display: flex;
+}
+
+.tittle-target {
+    width: 10rem;   
+    margin-left:1rem ;
+    font: bold;
+    border-right: solid;
+    border-color: #db5c5c;
+    margin-right: 1rem;
+}
